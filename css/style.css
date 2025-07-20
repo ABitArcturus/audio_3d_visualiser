@@ -1,0 +1,81 @@
+:root {
+    --button-background-color: #242424;
+    --dropzone-background-color-hover: #414141;
+    --font-color: #21b5cf;
+    --font-color-hover: #ffffff;
+
+    --fader-knob-color: #21b5cf;
+    --fader-track-color: #575757;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    color: var(--font-color);
+    background-color: #000000;
+}
+
+#visualiser-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+button {
+    background-color: var(--button-background-color);
+    border-radius: 5px;
+    border: none;
+    width: 200px;
+    color: var(--font-color);
+    text-align: center;
+    display: inline-block;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: var(--dropzone-background-color-hover);
+    color: var(--font-color-hover);
+}
+
+#audio-file-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+#dropzone {
+    width: 100%;
+    height: 50px;
+    border: 2px rgb(187, 84, 84);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--button-background-color);
+}
+
+#dropzone:hover {
+    color: #fff;
+    background-color: var(--dropzone-background-color-hover);
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    background: #000000;
+}
+
+/* firefox */
+input[type="range"]::-moz-range-thumb {
+    -webkit-appearance: none;
+    background: var(--fader-knob-color);
+}
+
+input[type="range"]::-moz-range-track {
+    -webkit-appearance: none;
+    background: var(--fader-track-color)
+}
