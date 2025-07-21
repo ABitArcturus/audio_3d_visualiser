@@ -37,9 +37,11 @@ class ThreeVisualiserMirrorLines extends BaseVisualiser {
       const canvasHeight = canvasSize.y;
       this.mouseCanvasX = event.clientX - this.canvas.offsetLeft;
       this.mouseCanvasY = event.clientY - this.canvas.offsetTop
-      this.mouseAddedHeight = Math.abs(canvasHeight / 2 - this.mouseCanvasY);
-    });
 
+      // the center of the height becomes 0
+      this.mouseAddedHeight = canvasHeight / 2 - this.mouseCanvasY;
+
+    });
   }
 
   update = () => {
