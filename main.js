@@ -13,7 +13,7 @@ let equaliser = null;
 let analyser = null;
 
 
-
+/*
 fetch("./audio/Motionless In White - Wasp.mp3")
     .then(response => response.arrayBuffer())
     .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
@@ -25,7 +25,7 @@ fetch("./audio/Motionless In White - Wasp.mp3")
         isAudioLoaded = true;
     })
     .catch(error => console.error('error loading audio', error));
-
+*/
 
 // ------------------------------------------------------------------------
 // drag and drop
