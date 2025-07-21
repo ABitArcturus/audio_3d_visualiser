@@ -12,6 +12,21 @@ let visualiser3D = null;
 let equaliser = null;
 let analyser = null;
 
+
+
+fetch("./audio/Motionless In White - Wasp.mp3")
+    .then(response => response.arrayBuffer())
+    .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
+    .then(decodedAudio => {
+        audioBuffer = decodedAudio;
+        audioSource = audioContext.createBufferSource();
+        audioSource.buffer = audioBuffer;
+        document.getElementById('play-audio-button').textContent = 'play audio - ready';
+        isAudioLoaded = true;
+    })
+    .catch(error => console.error('error loading audio', error));
+
+
 // ------------------------------------------------------------------------
 // drag and drop
 const dropzone = document.getElementById('dropzone');
@@ -35,8 +50,8 @@ dropzone.addEventListener('drop', async (event) => {
     }
     // stop previous audio
     if (audioSource) {
-            audioContext.suspend();
-            audioSource.stop();
+        audioContext.suspend();
+        audioSource.stop();
     }
 
     playAudioButton.textContent = 'loading audio ...';
@@ -183,3 +198,54 @@ document.getElementById("reset-equaliser").addEventListener("click", (event) => 
     }
 }
 );
+
+function resizeCanvas() {
+    // console.log(window.innerWidth, window.innerHeight);
+    if (visualiser3D != null)
+        visualiser3D.resizeCanvas();
+}
+
+window.onresize = resizeCanvas;
+let isUIHidden = false;
+window.addEventListener("keypress", (event) => {
+
+    switch (event.key) {
+        case 'h':
+            if (!isUIHidden) {
+                hideUI();
+                isUIHidden = true;
+            }
+            else {
+                showUI();
+                isUIHidden = false;
+            }
+
+            break;
+
+        case 'H':
+            if (!isUIHidden) {
+                hideUI();
+                isUIHidden = true;
+            }
+            else {
+                showUI();
+                isUIHidden = false;
+            }
+            break;
+    }
+
+});
+function hideUI() {
+    document.getElementById('dropzone').style.display = 'none';
+    document.getElementById('play-audio-button').style.display = 'none';
+    document.getElementById('visualiser-buttons').style.display = 'none';
+    document.getElementsByClassName('fader-container')[0].style.display = 'none';
+    resizeCanvas();
+}
+function showUI() {
+    document.getElementById('dropzone').style.display = 'flex';
+    document.getElementById('play-audio-button').style.display = 'inline-block';
+    document.getElementById('visualiser-buttons').style.display = 'flex';
+    document.getElementsByClassName('fader-container')[0].style.display = 'flex';
+    resizeCanvas();
+}

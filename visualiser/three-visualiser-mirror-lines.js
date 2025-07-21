@@ -17,12 +17,33 @@ class ThreeVisualiserMirrorLines extends BaseVisualiser {
     this.config.heightOfLines = 0;
     this.gui.add(this.config, 'heightOfLines', -50, 100).name('height of lines').step(1);
     this.config.isAdditionalEffect = false;
-    this.gui.add(this.config, 'isAdditionalEffect').name('additional effect');
+    this.controllerIsAdditionalEffect = this.gui.add(this.config, 'isAdditionalEffect').name('additional height of line support').onChange(() => { // todo rename
+      this.config.doesMouseChangeHeight = false;
+      this.controllerMouseChangesHeight.updateDisplay();
+    })
+    this.config.doesMouseChangeHeight = false;
+    this.controllerMouseChangesHeight = this.gui.add(this.config, 'doesMouseChangeHeight').name('mouse changes height').onChange(() => {
+      this.config.isAdditionalEffect = false;
+      this.controllerIsAdditionalEffect.updateDisplay();
+    });
+
+    this.canvas = document.getElementById("threejs-container");
+
+    let rendererSize = new THREE.Vector2();
+
+    this.canvas.addEventListener('mousemove', (event) => {
+      const canvasSize = this.renderer.getSize(rendererSize);
+      const canvasWidth = canvasSize.x;
+      const canvasHeight = canvasSize.y;
+      this.mouseCanvasX = event.clientX - this.canvas.offsetLeft;
+      this.mouseCanvasY = event.clientY - this.canvas.offsetTop
+      this.mouseAddedHeight = Math.abs(canvasHeight / 2 - this.mouseCanvasY);
+    });
 
   }
 
-
   update = () => {
+
 
     // calls the method from the base class to generate points based on analyser data
     const pointsXAxisLines = this.getPointsForSpectralFrame();
@@ -45,6 +66,11 @@ class ThreeVisualiserMirrorLines extends BaseVisualiser {
     else
       line.position.y = this.config.heightOfLines;
 
+    if (this.config.doesMouseChangeHeight)
+      line.position.y = this.config.heightOfLines + this.mouseAddedHeight;
+    else
+      line.position.y = this.config.heightOfLines;
+
     this.spectralFrameGroup.add(line);
 
     // ------------------------------------------------------------------------
@@ -55,7 +81,11 @@ class ThreeVisualiserMirrorLines extends BaseVisualiser {
     const mirrorLineGeometry = new THREE.BufferGeometry().setFromPoints(mirroredPoints);
     const mirrorLine = new THREE.Line(mirrorLineGeometry, material);
 
-    mirrorLine.position.y = -this.config.heightOfLines;
+    if (this.config.doesMouseChangeHeight)
+      mirrorLine.position.y = -this.config.heightOfLines - this.mouseAddedHeight;
+    else
+      mirrorLine.position.y = -this.config.heightOfLines;
+
     mirrorLine.position.z = line.position.z;
     this.spectralFrameGroup.add(mirrorLine);
     // ------------------------------------------------------------------------

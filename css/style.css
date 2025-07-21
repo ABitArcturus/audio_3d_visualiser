@@ -59,9 +59,18 @@ button:hover {
     background-color: var(--button-background-color);
 }
 
+
+
 #dropzone:hover {
     color: #fff;
     background-color: var(--dropzone-background-color-hover);
+}
+
+#threejs-container {
+    /* display: block; */
+    /* width: 100vb;
+    height: 100vh;
+    background-color: #21b5cf; */
 }
 
 input[type="range"] {

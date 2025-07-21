@@ -34,10 +34,10 @@ class ThreeVisualiserHandler {
         this.renderer = null;
         this.controls = null;
 
-        this.container = document.getElementById('threejs-container');
+        this.canvas = document.getElementById('threejs-container');
 
         // starting visualiser
-        this.changeVisualiser(ThreeVisualiserHandler.availableVisualisers[0]);
+        this.changeVisualiser(ThreeVisualiserHandler.availableVisualisers[4]);
         this.animate();
     }
 
@@ -168,8 +168,8 @@ class ThreeVisualiserHandler {
         }
         this.currentVisualiser = this.createVisualiser(visualiserName);
 
-        this.container.innerHTML = '';
-        this.container.appendChild(this.renderer.domElement);
+        this.canvas.innerHTML = '';
+        this.canvas.appendChild(this.renderer.domElement);
 
         // this.animate();
     }
@@ -179,6 +179,10 @@ class ThreeVisualiserHandler {
 
         // runs the update loop of the currently selected visualiser - as defined in its class
         this.currentVisualiser.update();
+    }
+    resizeCanvas = () => {
+        this.renderer.setSize(window.innerWidth - 20, window.innerHeight- 200);
+
     }
 }
 
