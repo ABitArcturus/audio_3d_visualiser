@@ -21,7 +21,7 @@ class ThreeVisualiserHandler {
         'upDown'
     ];
     // canvas adjustments
-    static CANVAS_WIDTH = window.innerWidth - 20;
+    static CANVAS_WIDTH = window.innerWidth;
     static CANVAS_HEIGHT = window.innerHeight - 200;
 
 
@@ -180,9 +180,11 @@ class ThreeVisualiserHandler {
         // runs the update loop of the currently selected visualiser - as defined in its class
         this.currentVisualiser.update();
     }
-    resizeCanvas = () => {
-        this.renderer.setSize(window.innerWidth - 20, window.innerHeight- 200);
-
+    resizeCanvas = (isUIActive) => {
+        if (!isUIActive)
+            this.renderer.setSize(window.innerWidth, window.innerHeight - 200);
+        else
+            this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
 }
 

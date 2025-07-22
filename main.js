@@ -7,14 +7,15 @@ let audioBuffer = null;
 let audioSource = null;
 let startflag = false;
 let isAudioLoaded = false;
+let isAudioPlaying = false;
 let isVisualiserReady = false;
 let visualiser3D = null;
 let equaliser = null;
 let analyser = null;
+let currentPlaybackTime = 0;
+let elapsedAudioContextTime = 0;
 
-
-/*
-fetch("./audio/Motionless In White - Wasp.mp3")
+/* fetch("./audio/1.mp3")
     .then(response => response.arrayBuffer())
     .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
     .then(decodedAudio => {
@@ -23,9 +24,10 @@ fetch("./audio/Motionless In White - Wasp.mp3")
         audioSource.buffer = audioBuffer;
         document.getElementById('play-audio-button').textContent = 'play audio - ready';
         isAudioLoaded = true;
+        setupAudioPlayback();
     })
     .catch(error => console.error('error loading audio', error));
-*/
+ */
 
 // ------------------------------------------------------------------------
 // drag and drop
@@ -66,6 +68,7 @@ dropzone.addEventListener('drop', async (event) => {
             startflag = false; // new audio = reset startflag
             playAudioButton.textContent = 'play audio - ready';
             isAudioLoaded = true;
+            setupAudioPlayback();
         } catch (error) {
             console.error('error loading audio:', error);
         }
@@ -74,14 +77,15 @@ dropzone.addEventListener('drop', async (event) => {
 });
 // ------------------------------------------------------------------------
 
-
+const playbackPositionContainer = document.getElementById("playback-position-container");
+let playbackPositionSlider = null;
 
 /**
  * Creates a new audio source and initializes equaliser, analyser and visualiser and stops any previous audio.
  * 
  * @return {void}
  */
-function createSource() {
+function setupAudioPlayback() {
 
     // clearing all previous objects
     if (equaliser) {
@@ -108,6 +112,11 @@ function createSource() {
     analyser = new Analyser(equaliser.getLastNode(), audioContext);
     visualiser3D = new ThreeVisualiserHandler(analyser);
     isVisualiserReady = true;
+
+    setupPlaybackPositionSlider();
+
+
+
 }
 
 /**
@@ -115,29 +124,45 @@ function createSource() {
  * 
  * @return {void}
  */
-function playAudio() {
+function startAudio() {
     if (audioBuffer) {
-        createSource();
         audioSource.start(0);
+        isAudioPlaying = true;
+        refreshSlider();
+        processCurrenPlaybackTime();
     } else {
         console.log('audio is not loaded yet');
     }
 }
+function pauseAudio() {
+    audioContext.suspend();
+    playAudioButton.textContent = 'resume';
+    isAudioPlaying = false;
+}
+function resumeAudio() {
+    audioContext.resume();
+    playAudioButton.textContent = 'pause';
+    isAudioPlaying = true;
+    refreshSlider();
+    processCurrenPlaybackTime();
+}
+
+// ------------------------------------------------------------------------
+// UI
 
 playAudioButton.addEventListener('click', () => {
 
     if (isAudioLoaded) {
         if (audioContext.state === 'suspended') {
-            audioContext.resume();
-            playAudioButton.textContent = 'pause';
+            resumeAudio();
         }
         if (!startflag) {
             startflag = true;
-            playAudio();
+            startAudio();
+            isAudioPlaying = true;
         }
         if (audioContext.state === 'running') {
-            audioContext.suspend();
-            playAudioButton.textContent = 'resume';
+            pauseAudio();
         }
     }
 });
@@ -185,8 +210,7 @@ for (let i = 1; i <= 7; i++) {
     document.getElementById(`eq-band-${i}`).addEventListener("input", (event) => {
         equaliser.setEQGain(i - 1, event.target.value);
     });
-}
-
+};
 
 document.getElementById("reset-equaliser").addEventListener("click", (event) => {
     // reset all equaliser bands to 0
@@ -196,56 +220,122 @@ document.getElementById("reset-equaliser").addEventListener("click", (event) => 
     for (let i = 1; i <= 7; i++) {
         document.getElementById(`eq-band-${i}`).value = 0;
     }
-}
-);
-
-function resizeCanvas() {
-    // console.log(window.innerWidth, window.innerHeight);
-    if (visualiser3D != null)
-        visualiser3D.resizeCanvas();
-}
-
-window.onresize = resizeCanvas;
+});
 let isUIHidden = false;
 window.addEventListener("keypress", (event) => {
 
     switch (event.key) {
         case 'h':
             if (!isUIHidden) {
-                hideUI();
                 isUIHidden = true;
+                hideUI();
             }
             else {
-                showUI();
                 isUIHidden = false;
+                showUI();
             }
-
             break;
-
+    
         case 'H':
             if (!isUIHidden) {
-                hideUI();
                 isUIHidden = true;
+                hideUI();
             }
             else {
-                showUI();
                 isUIHidden = false;
+                showUI();
             }
             break;
     }
-
 });
+
+
 function hideUI() {
-    document.getElementById('dropzone').style.display = 'none';
-    document.getElementById('play-audio-button').style.display = 'none';
+    dropzone.style.display = 'none';
+    playAudioButton.style.display = 'none';
     document.getElementById('visualiser-buttons').style.display = 'none';
     document.getElementsByClassName('fader-container')[0].style.display = 'none';
-    resizeCanvas();
+    document.getElementById('playback-position-container').style.display = 'none';
+
+    resizeCanvas(isUIHidden);
 }
 function showUI() {
-    document.getElementById('dropzone').style.display = 'flex';
-    document.getElementById('play-audio-button').style.display = 'inline-block';
+    dropzone.style.display = 'flex';
+    playAudioButton.style.display = 'inline-block';
     document.getElementById('visualiser-buttons').style.display = 'flex';
     document.getElementsByClassName('fader-container')[0].style.display = 'flex';
-    resizeCanvas();
+    document.getElementById('playback-position-container').style.display = 'flex';
+
+    resizeCanvas(isUIHidden);
+}
+
+// ------------------------------------------------------------------------
+// playback position slider
+let isSeeking = false;
+
+function setupPlaybackPositionSlider() {
+
+    playbackPositionContainer.innerHTML = "";
+    playbackPositionSlider = document.createElement("input");
+    playbackPositionSlider.id = "playback-position-slider";
+    playbackPositionSlider.type = "range";
+    playbackPositionSlider.min = "0";
+    playbackPositionSlider.max = audioBuffer.duration;
+    playbackPositionSlider.value = "0";
+    playbackPositionContainer.appendChild(playbackPositionSlider);
+
+    playbackPositionSlider.addEventListener("mousedown", () => {
+        isSeeking = true;
+    });
+    playbackPositionSlider.addEventListener("mouseup", (event) => {
+        changeAudioPosition(event.target.value);
+        isSeeking = false;
+        console.log("changed to: ", event.target.value)
+    });
+}
+
+
+function processCurrenPlaybackTime() {
+    if (!isAudioPlaying)
+        return;
+    const difference = Math.abs(elapsedAudioContextTime - audioContext.currentTime)
+
+    elapsedAudioContextTime += difference;
+    currentPlaybackTime += difference;
+
+    requestAnimationFrame(processCurrenPlaybackTime);
+}
+function refreshSlider() {
+    if (!isAudioPlaying)
+        return;
+
+    if (!isSeeking)
+        playbackPositionSlider.value = currentPlaybackTime;
+
+    requestAnimationFrame(refreshSlider);
+}
+
+function resizeCanvas() {
+    if (visualiser3D != null)
+        visualiser3D.resizeCanvas(isUIHidden);
+}
+
+window.onresize = resizeCanvas;
+
+
+// todo when audio stops, set isAudioPlaying = false
+
+function changeAudioPosition(timestamp) {
+
+    audioContext.suspend();
+    audioSource.stop();
+    audioSource.disconnect();
+    audioSource = audioContext.createBufferSource();
+    audioSource.buffer = audioBuffer;
+    equaliser.connectNodeToEQ(audioSource);
+
+    currentPlaybackTime = parseFloat(timestamp);
+
+    audioSource.start(0, currentPlaybackTime);
+    audioContext.resume();
 }

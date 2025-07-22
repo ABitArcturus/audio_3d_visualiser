@@ -88,3 +88,12 @@ input[type="range"]::-moz-range-track {
     -webkit-appearance: none;
     background: var(--fader-track-color)
 }
+
+#playback-position-container {
+    display: flex;
+    justify-content: center;
+}
+
+#playback-position-slider {
+    width: 95%;
+}

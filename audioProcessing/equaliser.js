@@ -3,8 +3,9 @@
  * Last node needs to be connected to destination.
  */
 class Equaliser {
-    
+
     constructor(node, audioContext) {
+        this.audioContext = audioContext;
 
         this.eqBands = [
             { frequency: 1000, type: "peaking" },
@@ -20,7 +21,7 @@ class Equaliser {
         // creating filters
         this.eqFilters = this.eqBands.map(
             (eqBand) => {
-                const filter = audioContext.createBiquadFilter();
+                const filter = this.audioContext.createBiquadFilter();
                 filter.type = eqBand.type;
                 filter.frequency.value = eqBand.frequency;
                 filter.Q.value = 5;
@@ -35,19 +36,18 @@ class Equaliser {
 
         // connections
         node.connect(this.eqFilters[0]);
-        this.eqFilters[this.eqFilters.length - 1].connect(audioContext.destination);
+        this.eqFilters[this.eqFilters.length - 1].connect(this.audioContext.destination);
 
     }
     /**
      * Connects the given node to the first filter in the equalizer.
      *
      * @param {AudioNode} node - The node to connect to the equalizer.
-     * @param {AudioContext} audioContext - The actual audio context.
      * @return {void}
      */
-    connectNodeToEQ(node, audioContext) {
+    connectNodeToEQ(node) {
         node.connect(this.eqFilters[0]);
-        this.eqFilters[this.eqFilters.length - 1].connect(audioContext.destination);
+        this.eqFilters[this.eqFilters.length - 1].connect(this.audioContext.destination);
     }
     /**
      * Returns the last node in the equalizer filter chain.
