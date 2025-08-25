@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Uhrkreis Klick</title>
+    <style>
+   
+       /*  label, mark {
+            user-select: none;
+        } */
+        /* otherwise clicks in potentiometer can select them */
+
+   /*  input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    } */
+    
+   
+    </style>
+</head>
+
+
+<body>
+ 
+
+
+    <script src="./potentiometer.js"></script>
+
+    <script>
+        const potentiometerAttack = new Potentiometer(0, 10, 10, "potentiometerAttack");
+        document.body.appendChild(potentiometerAttack.getPotentiometer());
+    </script>
+</body>
+
+</html>

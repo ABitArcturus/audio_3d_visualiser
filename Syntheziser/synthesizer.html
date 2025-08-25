@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synthesizer</title>
+    <link rel="stylesheet" href="./css/style.css">
+
+    <script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.177.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.177.0/examples/jsm/",
+    "dat.gui": "https://cdn.jsdelivr.net/npm/dat.gui@0.7.9/build/dat.gui.module.js"
+  }
+}
+</script>
+</head>
+
+<body>
+    <div id="container">
+        <div id="audio-file-container">
+            <div id="dropzone"> drag and drop audio file here </div>
+            <button id="play-audio-button">Play audio - not ready</button>
+        </div>
+        <button id="reset-view-button">Ansicht zurücksetzen</button>
+
+
+        <!-- <div id="light-controls" style="background: #222; padding: 10px; color: white;">
+            <label>X:
+                <span id="light-x-value"></span>
+                <input type="range" id="light-x" min="-300" max="300" value="0" step="1"></label><br>
+
+            <label>Y:
+                <span id="light-y-value"></span>
+                <input type="range" id="light-y" min="-300 " max="300" value="0" step="1"></label><br>
+            <label>Z:
+                <span id="light-z-value"></span>
+                <input type="range" id="light-z" min="-300" max="300" value="0" step="1"></label>
+        </div> -->
+
+
+        <div class="fader-container">
+            80 Hz<input type="range" min="-12" max="12" value="0" class="fader" id="eqBand1">
+            160 Hz<input type="range" min="-12" max="12" value="0" class="fader" id="eqBand2">
+            250 Hz<input type="range" min="-12" max="12" value="0" class="fader" id="eqBand3">
+            500 Hz<input type="range" min="-12" max="12" value="0" class="fader" id="eqBand4">
+            900 Hz<input type="range" min="-12" max="12" value="0" class="fader" id="eqBand5">
+            1500 Hz<input type="range" min="-12" max="12" value="0" class="fader" id="eqBand6">
+            2500 Hz<input type="range" min="-12" max="12" value="0" class="fader" id="eqBand7">
+            3200 Hz<input type="range" min="-12" max="12" value="0" class="fader" id="eqBand8">
+        </div>
+        <div id="three-container">
+        </div>
+        <div class="controls-container">
+            <button id="toggle-play">Play/Stop OSC1</button>
+            <label for="waveform">Waveform:</label>
+            <select id="waveform">
+                <option value="sine">Sine</option>
+                <option value="square">Square</option>
+                <option value="sawtooth">Sawtooth</option>
+                <option value="triangle">Triangle</option>
+            </select>
+            <label for="frequency">Frequency:</label>
+            <input type="range" id="frequency" min="20" max="20000" step="1" value="4000">
+            <span id="frequency-value">20</span> Hz
+            <label for="gain">Gain:</label>
+            <input type="range" id="gain" min="0" max="1" step="0.01" value="0.5">
+            <span id="gain-value">0.5</span>
+            <div id="adsr-container">
+                <div id="attack-container">
+                    <label for="attack-potentiometer">Attack in seconds</label>
+                </div>
+                <div id="decay-container">
+                    <label for="attack-potentiometer">Decay in seconds</label>
+                </div>
+                <div id="sustain">
+                    <label for="sustain">Sustain in seconds</label>
+                </div>
+                <div id="release-container">
+                    <label for="release-potentiometer">Release in seconds</label>
+                </div>
+
+
+            </div>
+
+            <div class="transpose-container">
+                <button id="transpose-up">Transpose Up</button>
+                <button id="transpose-down">Transpose Down</button>
+            </div>
+            <button id="toggle-fm">Toggle Frequency Modulator</button>
+            <label for="fm-gain">Modulator Gain:</label>
+            <input type="range" id="fm-gain" min="0" max="100" step="1" value="0">
+            <span id="fm-gain-value">0</span>
+            <label for="fm-frequency">Modulator Frequency:</label>
+            <input type="range" id="fm-frequency" min="0.1" max="100" step="0.1" value="2">
+            <span id="fm-frequency-value">2</span> Hz
+            <button id="toggle-rm">Toggle Ring Modulator</button>
+            <label for="rm-frequency">Ring Modulator Frequency:</label>
+            <input type="range" id="rm-frequency" min="0" max="100" step="1" value="0">
+            <span id="rm-frequency-value">0</span> Hz
+            <!-- ///////////////// noise -->
+            <div class="slider-container">
+                <label for="white-noise-gain-slider" class="slider-label">Noise Gain:</label>
+                <input type="range" id="white-noise-gain-slider" class="slider" min="0" max="1" step="0.01" value="0.5">
+                <span id="white-noise-gain-value">0.5</span>
+            </div>
+            <button id="start-white-noise">Start Noise</button>
+            <button id="stop-white-noise">Stop Noise</button>
+        </div>
+
+
+
+
+
+
+        <div id="kbo-container">
+
+            <div id="knob">
+
+                <div id="line"></div>
+                <div id="circle"></div>
+
+            </div>
+
+
+
+        </div>
+
+        <canvas id="analyser-canvas"></canvas>
+
+        <div id="keyboard-container">
+            <div id="keyboard">
+
+            </div>
+        </div>
+    </div>
+
+
+    <script type="module" src="./button-controller.js"></script>
+    <script type="module" src="./initialize-keyboard.js"></script>
+
+    <!-- <script type="module" src="./audioProcessing/analyser.js"></script> -->
+
+    <script type="module" src="./audioProcessing/load-audio.js"></script>
+
+    <!-- <script type="module" src="./visualiser/three-visualiser.js"></script> -->
+    <!-- <script type="module" src="./visualiser/three-visualiser-two.js"></script> -->
+    <!--  <script type="text/javascript" charset="UTF-8" src="./libs/three/three.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="./libs/three/controls/OrbitControls.js"></script> -->
+
+
+
+
+
+
+</body>
+
+</html>

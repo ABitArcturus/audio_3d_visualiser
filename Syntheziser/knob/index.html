@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <div id="kbo-container">
+
+        <div id="knob">
+
+            <div id="line"></div>
+            <div id="circle"></div>
+
+        </div>
+
+
+
+    </div>
+    <div id="knob2">
+
+        <!-- <svg width="200" height="200">
+            <circle cx="80" cy="80" r="50" stroke="black" stroke-width="2" fill="grey" >    </circle>
+        </svg> -->
+
+    </div>
+    <!--   <svg width="100" height="100">
+        <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />
+      </svg> -->
+    <script>
+
+        document.addEventListener('click', (event) => {
+            console.log("x: " + event.x);
+            console.log("y: " + event.y);
+
+
+        });
+
+        doSth();
+        function doSth() {
+            
+            const thing = document.createElement('svg');
+            /* thing.id = 'thing'; */
+            thing.setAttribute('width', '2');
+            thing.setAttribute('height', '25');
+
+            const circle = document.createElement('circle');
+            circle.setAttribute('cx', '50');
+            circle.setAttribute('cy', '50');
+            circle.setAttribute('r', '50');
+            circle.setAttribute('stroke', 'green');
+            circle.setAttribute('stroke-width', '4');
+
+            thing.appendChild(circle);
+            document.getElementById('knob2').appendChild(thing);
+            /*   document.body.appendChild(thing); */
+
+
+
+        }
+
+
+        const knob = document.getElementById('knob');
+        const line = document.getElementById('line');
+        const circle = document.getElementById('circle');
+
+        let isDragging = false;
+        let angle = 0;
+
+        /*   console.log(knob.getBoundingClientRect());
+          // x: 8, y: 8 */
+
+        knob.addEventListener('click', (e) => {
+            console.log(e);
+            console.log("target y: " + e.target.y);
+
+        });
+        /*  knob.addEventListener('mousedown', (e) => {
+             isDragging = true;
+             updateKnob(e);
+         });
+ 
+         document.addEventListener('mousemove', (e) => {
+             if (isDragging) {
+                 updateKnob(e);
+             }
+         });
+ 
+         document.addEventListener('mouseup', () => {
+             isDragging = false;
+         });
+ 
+         function updateKnob(e) {
+             const rect = knob.getBoundingClientRect();
+             const centerX = rect.left + rect.width / 2;
+             const centerY = rect.top + rect.height / 2;
+             const mouseX = e.clientX - centerX;
+             const mouseY = e.clientY - centerY;
+             angle = Math.atan2(mouseY, mouseX) * (180 / Math.PI) + 90; // Convert to degrees and adjust for 0 degrees at the top
+             line.style.transform = `rotate(${angle}deg)`;
+             circle.style.transform = `rotate(${angle}deg)`;
+         } */
+    </script>
+
+</body>
+
+</html>

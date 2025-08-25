@@ -28,6 +28,8 @@ class BaseVisualiser {
         this.spectralFrameGroup.position.z = this.spectralFrameGroupPositionZ;
         this.scene.add(this.spectralFrameGroup);
 
+
+
     }
     setCameraAndTarget = () => {
         this.defaultCameraPosition = new THREE.Vector3(this.cameraX, this.cameraY, this.cameraZ);
@@ -86,6 +88,54 @@ class BaseVisualiser {
             pointsXAxisLines.push(new THREE.Vector3(i, lastValue / this.config.amplitude, 0));
         }
 
+        return pointsXAxisLines;
+    };
+
+
+
+    processPoints = () => {
+
+        const dataArray = this.analyser.analyse(); // length = 1705
+        // limitation via this.lineLength
+
+        // creating lines according to the analyser data
+        const pointsXAxisLines = [];
+
+        let lastValue = dataArray[0];
+        this.averageY = 0;
+        let sumY = 0;
+        this.isFullSpectrumCovered = true;
+        this.lowFullLowFrequenciesCovered = true;
+        this.averageLowY = 0;
+
+        // loops through the analyser data
+        for (let i = 0; i < this.lineLength; i++) {
+
+            // skips dataArray values according to the detail factor
+            if (i % this.config.levelOfDetail === 0 && i < dataArray.length) {
+                lastValue = dataArray[i];
+            }
+
+            if (lastValue === 0) {
+                this.isFullSpectrumCovered = false;
+            }
+            if (lastValue === 0 && i < 500) {
+                this.lowFullLowFrequenciesCovered = false;
+            }
+
+
+            sumY = sumY + lastValue;
+
+            if (i >= 500 && this.averageLowY === 0) {
+                this.averageLowY = sumY / 500;
+            }
+
+
+            pointsXAxisLines.push(new THREE.Vector3(i, lastValue / this.config.amplitude, 0));
+        }
+        this.averageY = sumY / this.lineLength;
+
+        // console.log(this.isFullSpectrumCovered)
         return pointsXAxisLines;
     };
     /**

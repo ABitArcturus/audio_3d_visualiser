@@ -15,7 +15,7 @@ let analyser = null;
 let currentPlaybackTime = 0;
 let elapsedAudioContextTime = 0;
 
-/* fetch("./audio/1.mp3")
+fetch("./audio/1.mp3")
     .then(response => response.arrayBuffer())
     .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
     .then(decodedAudio => {
@@ -27,7 +27,7 @@ let elapsedAudioContextTime = 0;
         setupAudioPlayback();
     })
     .catch(error => console.error('error loading audio', error));
- */
+
 
 // ------------------------------------------------------------------------
 // drag and drop
@@ -235,7 +235,7 @@ window.addEventListener("keypress", (event) => {
                 showUI();
             }
             break;
-    
+
         case 'H':
             if (!isUIHidden) {
                 isUIHidden = true;
@@ -290,9 +290,10 @@ function setupPlaybackPositionSlider() {
     playbackPositionSlider.addEventListener("mouseup", (event) => {
         changeAudioPosition(event.target.value);
         isSeeking = false;
-        console.log("changed to: ", event.target.value)
+        // console.log("changed to: ", event.target.value)
     });
 }
+// todo loading new audio, reposition indicator
 
 
 function processCurrenPlaybackTime() {
@@ -303,7 +304,7 @@ function processCurrenPlaybackTime() {
     elapsedAudioContextTime += difference;
     currentPlaybackTime += difference;
 
-    requestAnimationFrame(processCurrenPlaybackTime);
+    requestAnimationFrame(processCurrenPlaybackTime); // todo typo
 }
 function refreshSlider() {
     if (!isAudioPlaying)

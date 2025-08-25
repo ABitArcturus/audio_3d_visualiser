@@ -1,0 +1,29 @@
+/* #line {
+    height: 25px;
+    width: 2px;
+    background-color: black;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 1;
+}
+
+#circle {
+    
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    background-color: red;
+
+    position: absolute;
+
+}
+
+#knob {
+    height: 50px;
+    width: 50px;
+    position: relative;
+    
+    transform: rotate(180deg);
+    background-color: antiquewhite
+} */
