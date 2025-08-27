@@ -16,6 +16,8 @@ const mixGain = audioCtx.createGain();
  * 
 */
 class AudioOscillatorController {
+    static validWaveTypes = ["sine", "square", "sawtooth", "triangle"];
+
     /**
      * Creates an oscillator and its parameters.
      * @constructor
@@ -58,6 +60,8 @@ class AudioOscillatorController {
         //connectNodeToEQ(this.oscGain);
         //this.oscGain.connect(audioCtx.destination);
 
+
+        // Object.freeze(this);
     }
     connectToDestination() {
         mixGain.connect(audioCtx.destination);
@@ -77,6 +81,9 @@ class AudioOscillatorController {
     * @return {void}
     */
     setWaveform(type) {
+        if (!AudioOscillatorController.validWaveTypes.includes(type)) {
+            throw new Error("Invalid wave type.")
+        }
         this.osc.type = type;
     }
 
@@ -95,7 +102,12 @@ class AudioOscillatorController {
      * @param {number} frequency The frequency value to set for the oscillator in Hertz.
      * @return {void}
      */
-    setFrequency(frequency) {
+
+
+    setFrequency(frequency) { //todo set frequency
+        if (frequency < 20 || frequency > 20000) {
+            throw new Error("Frequency must be between 20 and 20 kHz.")
+        }
         this.osc.frequency.value = frequency;
     }
 
@@ -104,7 +116,7 @@ class AudioOscillatorController {
      *
      * @return {number} The frequency value of the oscillator in Hertz.
      */
-    getFrequency() {
+    getFrequency() { // todo get frequency
         return this.osc.frequency.value;
     }
 
@@ -129,7 +141,7 @@ class AudioOscillatorController {
         this.oscAttack = attackSeconds;
     }
 
-     getAttack() {
+    getAttack() {
         return this.oscAttack;
     }
     /**
@@ -140,7 +152,7 @@ class AudioOscillatorController {
     setDecay(decaySeconds) {
         this.oscDecay = decaySeconds;
     }
-      getDecay() {
+    getDecay() {
         return this.oscDecay;
     }
 
@@ -153,6 +165,9 @@ class AudioOscillatorController {
     setSustain(sustain) {
         this.oscSustain = sustain;
     }
+    getSustain() {
+        return this.oscSustain;
+    }
 
     /**
      * Sets the release time of the oscillator in seconds.
@@ -161,6 +176,9 @@ class AudioOscillatorController {
      */
     setRelease(releaseSeconds) {
         this.oscRelease = releaseSeconds;
+    }
+    getRelease() {
+        this.oscRelease;
     }
 
     /**

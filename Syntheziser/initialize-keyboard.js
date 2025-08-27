@@ -1,4 +1,4 @@
-import { KEY_LAYOUT } from "./button-controller.js";
+import { KEY_LAYOUT } from "./ui-controls.js";
 
 const NUMBER_OF_KEYS = Object.entries(KEY_LAYOUT).length;
 const NOTES = ["c", "c-sharp", "d", "d-sharp", "e", "f", "f-sharp", "g", "g-sharp", "a", "a-sharp", "b"]; // 12
@@ -50,7 +50,7 @@ for (let i = 0; i < NUMBER_OF_KEYS; i++) {
         parentKeyContainer.appendChild(key);
         keyPairContainerCount = 0;
     } else {
-        // single white key
+        // single white key / e or b
         keyboard.appendChild(key);
     }
     octaveCount++;
@@ -58,5 +58,4 @@ for (let i = 0; i < NUMBER_OF_KEYS; i++) {
         currentOctave++;
         octaveCount = 0;
     }
-    //console.log(key)
 }
