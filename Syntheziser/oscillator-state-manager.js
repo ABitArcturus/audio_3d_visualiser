@@ -9,7 +9,6 @@ export class SelectedOscillatorStore {
         this.currentOscillator = null;
     }
 
-
     set(oscillator) {
         this.currentOscillator = oscillator;
         this.notify();
@@ -96,14 +95,7 @@ class ObserverWithPotentiometer extends Observer {
         /*  this.value.textContent = this.currentOscillator.getFrequency();
          this.range.value = this.value.textContent; */
     }
-    // TODO make private
-    updateValueInOscillator(parameter) {
-        console.log("Updating value in Oscillator: " + parameter);
-    }
-    // TODO make private
-    updateValueInPotentiometer() {
-        console.log("Updating value in Potentiometer: ", this.currentOscillator);
-    }
+    
 
 }
 // observer/subscriber
@@ -116,13 +108,11 @@ export class AttackControl extends ObserverWithPotentiometer {
     }
     // TODO make private
     updateValueInOscillator(parameter) {
-        console.log("AttackControl: ");
         this.attack = parameter;
         this.currentOscillator.setAttack(this.attack);
     }
     // TODO make private
     updateValueInPotentiometer() {
-        console.log(this.currentOscillator);
         this.attack = this.currentOscillator.getAttack();
         this.potentiometer.setCurrentValue(this.attack);
     }
@@ -168,9 +158,7 @@ export class WaveformViewUpdater extends Observer {
 
     constructor(id, oscillatorStore) {
         super(oscillatorStore);
-        // this.oscillatorStore = oscillatorStore;
-        // this.oscillatorStore.subscribe(this);
-        // this.currentOscillator = this.oscillatorStore.getOscillator();
+   
         this.waveform = document.getElementById(id);
 
         this.waveform.addEventListener("change", (event) => {
@@ -188,12 +176,8 @@ export class FrequencyViewUpdater extends Observer {
     constructor(idRange, idDisplay, oscillatorStore) {
         super(oscillatorStore);
 
-
         this.range = document.getElementById(idRange);
         this.value = document.getElementById(idDisplay);
-        // this.oscillatorStore = oscillatorStore;
-        // this.oscillatorStore.subscribe(this);
-        // this.currentOscillator = this.oscillatorStore.getOscillator();
 
         this.range.addEventListener("input", () => {
             if (this.oscillatorStore) {
@@ -210,27 +194,3 @@ export class FrequencyViewUpdater extends Observer {
     }
 
 }
-
-
-
-
-
-
-
-/* 
-
-class OscillatorSubscriber {
-  constructor(id, oscillatorStore) {
-    this.oscillatorStore = oscillatorStore;
-    this.oscillatorStore.subscribe(this);
-    this.currentOscillator = this.oscillatorStore.getOscillator();
-    this.id = id;
-  }
-}
-
-
-class SomeClass extends OscillatorSubscriber {
-  constructor(id, oscillatorStore) {
-    super(id, oscillatorStore);
-  }
-*/
